@@ -90,7 +90,7 @@ else
         is_ok=$is_jq_ok
         ;;
     esac
-msg warn "下载 ${name} > ${link}"
+msg warn "下载 ${name} > ${link}" 
 fi
 tar -zxvf ${FILE_NAME}.tar.gz
 
