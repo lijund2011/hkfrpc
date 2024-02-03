@@ -54,15 +54,15 @@ PROXY_HTTP_CODE=$(curl -o /dev/null --connect-timeout 5 --max-time 8 -s --head -
     sh)
         if [ $GOOGLE_HTTP_CODE == "200" ]; then
 		name="${FILE_NAME}.tar.gz"
-	    link=${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+		link=https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 		msg warn "下载 ${name} > ${link}"
     wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 	
 else
     if [ $PROXY_HTTP_CODE == "200" ]; then
 	    name="代理下载${FILE_NAME}.tar.gz"
-	    link=${WORK_PATH}  ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
-	msg warn "下载 ${name} > ${link}"
+	    link=https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+	    msg warn "下载 ${name} > ${link}"
         wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 		
     else
@@ -156,6 +156,7 @@ FILE_NAME=frp_${FRP_VERSION}_linux_${PLATFORM}
     echo
     echo "........... $FRP_core_name script by $author .........."
     echo
+	msg warn "开始安装..."
 	download sh
 }
 # start.
