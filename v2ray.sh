@@ -1,6 +1,6 @@
 #!/bin/bash
 
 args=$@
-is_sh_ver=v4.17
+is_sh_ver=v1.10
 
-. /etc/v2ray/sh/src/init.sh
+. /etc/hkfrp/sh/src/init.sh
