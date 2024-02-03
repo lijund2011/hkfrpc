@@ -82,7 +82,7 @@ hkfrpc_NAME=hkfrpc
 
     mkdir -p ${FRP_core_dir}
     chmod -R 755 ${FRP_core_dir}
-    mv ${hkfrpc_NAME} ${FRP_core_dir}
+    mv ${FRP_core_dir}
         ;;
 	jq)
         if [ $GOOGLE_HTTP_CODE == "200" ]; then
