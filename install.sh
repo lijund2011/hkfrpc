@@ -50,9 +50,13 @@ PROXY_HTTP_CODE=$(curl -o /dev/null --connect-timeout 5 --max-time 8 -s --head -
     sh)
         if [ $GOOGLE_HTTP_CODE == "200" ]; then
     wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+	name="${FILE_NAME}.tar.gz"
+	link=${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 else
     if [ $PROXY_HTTP_CODE == "200" ]; then
         wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+		name="代理下载${FILE_NAME}.tar.gz"
+	    link=${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
     else
         echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
         wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
@@ -73,8 +77,6 @@ mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
     esac
 
     msg warn "下载 ${name} > ${link}"
-    if _wget -t 3 -q -c $link -O $tmpfile; then
-        mv -f $tmpfile $is_ok
     fi
 }
 
@@ -147,7 +149,7 @@ FILE_NAME=frp_${FRP_VERSION}_linux_${PLATFORM}
     echo
     echo "........... $FRP_core_name script by $author .........."
     echo
-	
+	download sh
 }
 # start.
 main $@
