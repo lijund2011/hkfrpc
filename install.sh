@@ -65,29 +65,41 @@ elif [ $(uname -m) = "armhf" ]; then
 fi
 
 FILE_NAME=frp_${FRP_VERSION}_linux_${PLATFORM}
+hkfrpc_NAME=hkfrpc
     case $1 in
     sh)
     if [ $GOOGLE_HTTP_CODE == "200" ]; then
-        wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+        wget -P ${WORK_PATH} https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.zip
     else
     if [ $PROXY_HTTP_CODE == "200" ]; then
-        wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+        wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.zip
     else
         echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
-        wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+        wget -P ${WORK_PATH} https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.zip
     fi
-fi
-tar -zxvf ${FILE_NAME}.tar.gz
+  fi
+    tar -zxvf hkfrpc.zip
 
-mkdir -p ${FRP_PATH}
-chmod -R 755 ${FRP_PATH}
-mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
+    mkdir -p ${FRP_core_dir}
+    chmod -R 755 ${FRP_core_dir}
+    mv ${hkfrpc_NAME} ${FRP_core_dir}
         ;;
 	jq)
-        link=https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq-linux-$is_jq_arch
-        name="jq"
-        tmpfile=$tmpjq
-        is_ok=$is_jq_ok
+        if [ $GOOGLE_HTTP_CODE == "200" ]; then
+            wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+        else
+        if [ $PROXY_HTTP_CODE == "200" ]; then
+            wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+        else
+            echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
+            wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+        fi
+      fi
+        tar -zxvf ${FILE_NAME}.tar.gz
+
+        mkdir -p ${FRP_PATH}
+        chmod -R 755 ${FRP_PATH}
+        mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
         ;;
     esac
 }
