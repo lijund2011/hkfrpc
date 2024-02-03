@@ -24,7 +24,7 @@ PROXY_URL="https://ghproxy.com/"
 author=lijund2011
 FRP_core=hkfrp
 FRP_core_name=HKFRP
-FRP_core_dir=/etc/$FRP_core
+FRP_core_dir=/etc
 FRP_sh_dir=$FRP_core_dir
 
 
