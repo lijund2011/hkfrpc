@@ -4,11 +4,15 @@ export PATH
 
 # fonts color
 Green="\033[32m"
+greens='\e[92m'
 Red="\033[31m"
+reds='\e[31m'
 Yellow="\033[33m"
+yellows='\e[33m'
 GreenBG="\033[42;37m"
 RedBG="\033[41;37m"
 Font="\033[0m"
+none='\e[0m'
 # fonts color
 
 # variable
@@ -28,17 +32,17 @@ FRP_sh_dir=$FRP_core_dir
 msg() {
     case $1 in
     warn)
-        local color=$yellow
+        local color=$yellows
         ;;
     err)
-        local color=$red
+        local color=$reds
         ;;
     ok)
-        local color=$green
+        local color=$greens
         ;;
     esac
 
-    echo -e "${color}$(date +'%T')${Font}) ${2}"
+    echo -e "${color}$(date +'%T')${none}) ${2}"
 }
 
 # download file
@@ -50,14 +54,14 @@ PROXY_HTTP_CODE=$(curl -o /dev/null --connect-timeout 5 --max-time 8 -s --head -
     sh)
         if [ $GOOGLE_HTTP_CODE == "200" ]; then
 		name="${FILE_NAME}.tar.gz"
-	link=${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+	    link=${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 		msg warn "下载 ${name} > ${link}"
     wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 	
 else
     if [ $PROXY_HTTP_CODE == "200" ]; then
-	name="代理下载${FILE_NAME}.tar.gz"
-	    link=${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+	    name="代理下载${FILE_NAME}.tar.gz"
+	    link=${WORK_PATH}  ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 	msg warn "下载 ${name} > ${link}"
         wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
 		
