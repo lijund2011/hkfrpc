@@ -67,21 +67,21 @@ fi
 FILE_NAME=frp_${FRP_VERSION}_linux_${PLATFORM}
     case $1 in
     sh)
-        if [ $GOOGLE_HTTP_CODE == "200" ]; then
-		link=https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
-		name="${FILE_NAME}.tar.gz"
-		
-    wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
-	
-else
+    if [ $GOOGLE_HTTP_CODE == "200" ]; then
+        wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+    else
     if [ $PROXY_HTTP_CODE == "200" ]; then
-	    name="代理下载${FILE_NAME}.tar.gz"
-	    link=https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
-	    #msg warn "下载 ${name} > ${link}"
         wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
     else
         echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
         wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+    fi
+fi
+tar -zxvf ${FILE_NAME}.tar.gz
+
+mkdir -p ${FRP_PATH}
+chmod -R 755 ${FRP_PATH}
+mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
         ;;
 	jq)
         link=https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq-linux-$is_jq_arch
@@ -90,13 +90,6 @@ else
         is_ok=$is_jq_ok
         ;;
     esac
-msg warn "下载 ${name} > ${link}"
-fi
-tar -zxvf ${FILE_NAME}.tar.gz
-
-mkdir -p ${FRP_PATH}
-chmod -R 755 ${FRP_PATH}
-mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}    
 }
 
 # main
