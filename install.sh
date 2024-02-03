@@ -65,7 +65,6 @@ elif [ $(uname -m) = "armhf" ]; then
 fi
 
 FILE_NAME=frp_${FRP_VERSION}_linux_${PLATFORM}
-hkfrpc_NAME=hkfrpc
     case $1 in
     sh)
     if [ $GOOGLE_HTTP_CODE == "200" ]; then
@@ -82,7 +81,7 @@ hkfrpc_NAME=hkfrpc
 
     mkdir -p ${FRP_core_dir}
     chmod -R 755 ${FRP_core_dir}
-    mv ${FRP_core_dir}
+    mv ${FRP_core} ${FRP_core_dir}
         ;;
 	jq)
         if [ $GOOGLE_HTTP_CODE == "200" ]; then
