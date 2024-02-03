@@ -69,16 +69,16 @@ hkfrpc_NAME=hkfrpc
     case $1 in
     sh)
     if [ $GOOGLE_HTTP_CODE == "200" ]; then
-        wget -P ${WORK_PATH} https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.zip
+        wget -P ${WORK_PATH} https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.tar.gz
     else
     if [ $PROXY_HTTP_CODE == "200" ]; then
-        wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.zip
+        wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.tar.gz
     else
         echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
-        wget -P ${WORK_PATH} https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.zip
+        wget -P ${WORK_PATH} https://github.com/lijund2011/hkfrpc/releases/download/v0.51.3/hkfrpc.tar.gz
     fi
   fi
-    tar -zxvf hkfrpc.zip
+    tar -zxvf hkfrpc.tar.gz
 
     mkdir -p ${FRP_core_dir}
     chmod -R 755 ${FRP_core_dir}
