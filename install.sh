@@ -77,7 +77,6 @@ mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
     esac
 
     msg warn "下载 ${name} > ${link}"
-    fi
 }
 
 # main
