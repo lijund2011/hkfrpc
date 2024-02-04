@@ -33,7 +33,7 @@ Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #安装BBR内核
-set_install(){
+install(){
 check_frpc
 # check pkg
 if type apt-get >/dev/null 2>&1 ; then
@@ -353,7 +353,7 @@ check_status(){
 #############系统检测组件#############
 check_sys
 #check_frpc
-#installfrpc
+install
 #check_version
 #[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
 start_menu
