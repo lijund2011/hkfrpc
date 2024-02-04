@@ -84,8 +84,9 @@ rm -rf ${WORK_PATH}/${FILE_NAME}.tar.gz ${WORK_PATH}/${FILE_NAME}
 	stty erase '^H' && read -p "是否进行文件配置 ? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
 	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
-		reboot
+		echo -e "${Info} 进入配置中..."
+		set_token
+		#reboot
 	fi
 }
 
@@ -159,16 +160,39 @@ while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
     FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
     kill -9 $FRPCPID
 done
-
+if [ -f "/usr/local/frp/${FRP_NAME}" ] || [ -f "/usr/local/frp/${FRP_NAME}.ini" ] || [ -f "/lib/systemd/system/${FRP_NAME}.service" ];then
 echo -e "${Tip} ${Red_font_prefix}${FRP_TITLE}已安装${Font_color_suffix}"
 	stty erase '^H' && read -p "卸载按【y】|进入菜单按【n】 ? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
-	if [[ $yn == [Yy] ]]; then
+	elif [[ $yn == [Yy] ]]; then
 		echo -e "${Info} VPS 重启中..."
-		reboot
+		#reboot
+		uninstall
 	else
     	start_menu
+		exit 0
 	fi
+}
+
+#卸载
+uninstall(){
+	# 停止frpc
+sudo systemctl stop ${FRP_NAME}
+sudo systemctl disable ${FRP_NAME}
+# 删除frpc
+rm -rf ${FRP_PATH}
+# 删除frpc.service
+rm -rf /lib/systemd/system/${FRP_NAME}.service
+sudo systemctl daemon-reload
+# 删除本文件
+#rm -rf ${FRP_NAME}_linux_uninstall.sh
+
+echo -e "${Green}============================${Font}"
+echo -e "${Green}卸载成功,相关文件已清理完毕!${Font}"
+echo -e "${Green}============================${Font}"
+sleep 3s
+start_menu
+exit 0
 }
 
 #检查系统
