@@ -34,7 +34,27 @@ Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #安装BBR内核
 installfrpc(){
-	# check pkg
+if [ -f "/usr/local/frp/${FRP_NAME}" ] || [ -f "/usr/local/frp/${FRP_NAME}.ini" ] || [ -f "/lib/systemd/system/${FRP_NAME}.service" ];then
+    echo -e "${Green}=========================================================================${Font}"
+    echo -e "${RedBG}当前已退出脚本.${Font}"
+    echo -e "${Green}检查到服务器已安装${Font} ${Red}${FRP_NAME}${Font}"
+    echo -e "${Green}请手动确认和删除${Font} ${Red}/usr/local/frp/${Font} ${Green}目录下的${Font} ${Red}${FRP_NAME}${Font} ${Green}和${Font} ${Red}/${FRP_NAME}.ini${Font} ${Green}文件以及${Font} ${Red}/lib/systemd/system/${FRP_NAME}.service${Font} ${Green}文件,再次执行本脚本.${Font}"
+    echo -e "${Green}参考命令如下:${Font}"
+    echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}${Font}"
+    echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}.ini${Font}"
+    echo -e "${Red}rm -rf /lib/systemd/system/${FRP_NAME}.service${Font}"
+    echo -e "${Green}=========================================================================${Font}"
+    exit 0
+fi
+
+while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
+    FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
+    kill -9 $FRPCPID
+done
+
+else
+
+# check pkg
 if type apt-get >/dev/null 2>&1 ; then
     if ! type wget >/dev/null 2>&1 ; then
         apt-get install wget -y
@@ -76,15 +96,50 @@ tar -xzf ${FILE_NAME}.tar.gz
 
 mkdir -p ${FRP_PATH}
 mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
-# clean
-rm -rf ${WORK_PATH}/${FILE_NAME}.tar.gz ${WORK_PATH}/${FILE_NAME} hkfrp.sh
-	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBR/BBR魔改版${Font_color_suffix}"
-	stty erase '^H' && read -p "需要重启VPS后，才能开启BBR/BBR魔改版，是否现在重启 ? [Y/n] :" yn
+# 删除没用文件
+rm -rf ${WORK_PATH}/${FILE_NAME}.tar.gz ${WORK_PATH}/${FILE_NAME}
+
+	echo -e "${Tip} ${Red_font_prefix}安装成功需要配置文件才能正常启动${Font_color_suffix}"
+	stty erase '^H' && read -p "是否进行文件配置 ? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
 	if [[ $yn == [Yy] ]]; then
 		echo -e "${Info} VPS 重启中..."
 		reboot
 	fi
+}
+
+#检查Configuration
+check_Configuration(){
+url="https://www.hkfrp.cn/api/ajax?id=UG75FXH6&user=Q3U8yX5zDrxEWRuK"
+res = curl ${url}
+curl ${url} > ${FRP_PATH}/${FRP_NAME}.ini
+# configure frpc.ini
+#cat >${FRP_PATH}/${FRP_NAME}.ini <<EOF
+#${res}
+#EOF
+chmod -R 755 ${FRP_PATH}/${FRP_NAME}.ini
+# configure systemd
+cat >/lib/systemd/system/${FRP_NAME}.service <<EOF
+[Unit]
+Description=Frp Server Service
+After=network.target syslog.target
+Wants=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/local/frp/${FRP_NAME} -c /usr/local/frp/${FRP_NAME}.ini
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# finish install
+systemctl daemon-reload
+sudo systemctl start ${FRP_NAME}
+sudo systemctl enable ${FRP_NAME}
+
 }
 
 #检查frpc
@@ -299,7 +354,7 @@ check_status(){
 
 #############系统检测组件#############
 check_sys
-check_frpc
+#check_frpc
 installfrpc
 #check_version
 #[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
