@@ -70,7 +70,7 @@ else
         wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
     fi
 fi
-tar -zxvf ${FILE_NAME}.tar.gz
+tar -xzf ${FILE_NAME}.tar.gz
 
 mkdir -p ${FRP_PATH}
 mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
