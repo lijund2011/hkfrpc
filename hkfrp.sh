@@ -34,26 +34,7 @@ Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #安装BBR内核
 installfrpc(){
-if [ -f "/usr/local/frp/${FRP_NAME}" ] || [ -f "/usr/local/frp/${FRP_NAME}.ini" ] || [ -f "/lib/systemd/system/${FRP_NAME}.service" ];then
-    echo -e "${Green}=========================================================================${Font}"
-    echo -e "${RedBG}当前已退出脚本.${Font}"
-    echo -e "${Green}检查到服务器已安装${Font} ${Red}${FRP_NAME}${Font}"
-    echo -e "${Green}请手动确认和删除${Font} ${Red}/usr/local/frp/${Font} ${Green}目录下的${Font} ${Red}${FRP_NAME}${Font} ${Green}和${Font} ${Red}/${FRP_NAME}.ini${Font} ${Green}文件以及${Font} ${Red}/lib/systemd/system/${FRP_NAME}.service${Font} ${Green}文件,再次执行本脚本.${Font}"
-    echo -e "${Green}参考命令如下:${Font}"
-    echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}${Font}"
-    echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}.ini${Font}"
-    echo -e "${Red}rm -rf /lib/systemd/system/${FRP_NAME}.service${Font}"
-    echo -e "${Green}=========================================================================${Font}"
-    exit 0
-fi
-
-while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
-    FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
-    kill -9 $FRPCPID
-done
-
-else
-
+check_frpc
 # check pkg
 if type apt-get >/dev/null 2>&1 ; then
     if ! type wget >/dev/null 2>&1 ; then
@@ -355,7 +336,7 @@ check_status(){
 #############系统检测组件#############
 check_sys
 #check_frpc
-installfrpc
+#installfrpc
 #check_version
 #[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
 start_menu
