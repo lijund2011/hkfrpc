@@ -21,6 +21,7 @@ Font="\033[0m"
 
 # variable
 WORK_PATH=$(dirname $(readlink -f $0))
+FRP_TITLE=好快FRP内网穿透
 FRP_NAME=frpc
 FRP_VERSION=0.51.3
 FRP_PATH=/usr/local/frp
@@ -32,29 +33,48 @@ Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #安装BBR内核
-installbbr(){
-	kernel_version="4.11.8"
-	if [[ "${release}" == "centos" ]]; then
-		rpm --import http://${github}/bbr/${release}/RPM-GPG-KEY-elrepo.org
-		yum install -y http://${github}/bbr/${release}/${version}/${bit}/kernel-ml-${kernel_version}.rpm
-		yum remove -y kernel-headers
-		yum install -y http://${github}/bbr/${release}/${version}/${bit}/kernel-ml-headers-${kernel_version}.rpm
-		yum install -y http://${github}/bbr/${release}/${version}/${bit}/kernel-ml-devel-${kernel_version}.rpm
-	elif [[ "${release}" == "debian" || "${release}" == "ubuntu" ]]; then
-		mkdir bbr && cd bbr
-		wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u10_amd64.deb
-		wget -N --no-check-certificate http://${github}/bbr/debian-ubuntu/linux-headers-${kernel_version}-all.deb
-		wget -N --no-check-certificate http://${github}/bbr/debian-ubuntu/${bit}/linux-headers-${kernel_version}.deb
-		wget -N --no-check-certificate http://${github}/bbr/debian-ubuntu/${bit}/linux-image-${kernel_version}.deb
-	
-		dpkg -i libssl1.0.0_1.0.1t-1+deb8u10_amd64.deb
-		dpkg -i linux-headers-${kernel_version}-all.deb
-		dpkg -i linux-headers-${kernel_version}.deb
-		dpkg -i linux-image-${kernel_version}.deb
-		cd .. && rm -rf bbr
-	fi
-	detele_kernel
-	BBR_grub
+installfrpc(){
+	# check pkg
+if type apt-get >/dev/null 2>&1 ; then
+    if ! type wget >/dev/null 2>&1 ; then
+        apt-get install wget -y
+    fi
+    if ! type curl >/dev/null 2>&1 ; then
+        apt-get install curl -y
+    fi
+fi
+
+if type yum >/dev/null 2>&1 ; then
+    if ! type wget >/dev/null 2>&1 ; then
+        yum install wget -y
+    fi
+    if ! type curl >/dev/null 2>&1 ; then
+        yum install curl -y
+    fi
+fi
+
+# check network
+GOOGLE_HTTP_CODE=$(curl -o /dev/null --connect-timeout 5 --max-time 8 -s --head -w "%{http_code}" "https://www.google.com")
+PROXY_HTTP_CODE=$(curl -o /dev/null --connect-timeout 5 --max-time 8 -s --head -w "%{http_code}" "${PROXY_URL}")
+
+FILE_NAME=frp_${FRP_VERSION}_linux_${PLATFORM}
+
+# download
+if [ $GOOGLE_HTTP_CODE == "200" ]; then
+    wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+else
+    if [ $PROXY_HTTP_CODE == "200" ]; then
+        wget -P ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+    else
+        echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
+        wget -P ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}.tar.gz -O ${FILE_NAME}.tar.gz
+    fi
+fi
+tar -zxvf ${FILE_NAME}.tar.gz
+
+mkdir -p ${FRP_PATH}
+mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
+
 	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBR/BBR魔改版${Font_color_suffix}"
 	stty erase '^H' && read -p "需要重启VPS后，才能开启BBR/BBR魔改版，是否现在重启 ? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
@@ -64,13 +84,49 @@ installbbr(){
 	fi
 }
 
+#检查frpc
+check_frpc(){
+if [ -f "/usr/local/frp/${FRP_NAME}" ] || [ -f "/usr/local/frp/${FRP_NAME}.ini" ] || [ -f "/lib/systemd/system/${FRP_NAME}.service" ];then
+    echo -e "${Green}=========================================================================${Font}"
+    echo -e "${RedBG}当前已退出脚本.${Font}"
+    echo -e "${Green}检查到服务器已安装${Font} ${Red}${FRP_NAME}${Font}"
+    echo -e "${Green}请手动确认和删除${Font} ${Red}/usr/local/frp/${Font} ${Green}目录下的${Font} ${Red}${FRP_NAME}${Font} ${Green}和${Font} ${Red}/${FRP_NAME}.ini${Font} ${Green}文件以及${Font} ${Red}/lib/systemd/system/${FRP_NAME}.service${Font} ${Green}文件,再次执行本脚本.${Font}"
+    echo -e "${Green}参考命令如下:${Font}"
+    echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}${Font}"
+    echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}.ini${Font}"
+    echo -e "${Red}rm -rf /lib/systemd/system/${FRP_NAME}.service${Font}"
+    echo -e "${Green}=========================================================================${Font}"
+    exit 0
+fi
+
+while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
+    FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
+    kill -9 $FRPCPID
+done
+
+}
+
+#检查系统
+check_sys(){
+	if [ $(uname -m) = "x86_64" ]; then
+		PLATFORM=amd64
+	elif [ $(uname -m) = "aarch64" ]; then
+		PLATFORM=arm64
+	elif [ $(uname -m) = "armv7" ]; then
+		PLATFORM=arm
+	elif [ $(uname -m) = "armv7l" ]; then
+		PLATFORM=arm
+	elif [ $(uname -m) = "armhf" ]; then
+		PLATFORM=arm
+	fi
+}
+
 #开始菜单
 start_menu(){
 clear
-echo && echo -e " TCP加速 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
-  -- 就是爱生活 | 94ish.me --
+echo && echo -e " ${FRP_TITLE} 一键安装管理脚本 ${Red_font_prefix}[v${FRP_VERSION}]${Font_color_suffix}
   
-  -- Zeruns 's Blog | blog.zeruns.tech --
+  -- ${FRP_TITLE} | https://www.hkfrp.cn/ --
   
  ${Green_font_prefix}0.${Font_color_suffix} 升级脚本
 ————————————内核管理————————————
@@ -144,20 +200,7 @@ case "$num" in
 esac
 }
 
-#检查系统
-check_sys(){
-	if [ $(uname -m) = "x86_64" ]; then
-		PLATFORM=amd64
-	elif [ $(uname -m) = "aarch64" ]; then
-		PLATFORM=arm64
-	elif [ $(uname -m) = "armv7" ]; then
-		PLATFORM=arm
-	elif [ $(uname -m) = "armv7l" ]; then
-		PLATFORM=arm
-	elif [ $(uname -m) = "armhf" ]; then
-		PLATFORM=arm
-	fi
-}
+
 
 
 #检查安装bbr的系统要求
@@ -253,6 +296,8 @@ check_status(){
 
 #############系统检测组件#############
 check_sys
+check_frpc
+installfrpc
 #check_version
 #[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
 start_menu
