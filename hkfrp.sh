@@ -152,15 +152,13 @@ if [ -f "/usr/local/frp/${FRP_NAME}" ] || [ -f "/usr/local/frp/${FRP_NAME}.ini" 
     echo -e "${Red}rm -rf /usr/local/frp/${FRP_NAME}.ini${Font}"
     echo -e "${Red}rm -rf /lib/systemd/system/${FRP_NAME}.service${Font}"
     echo -e "${Green}=========================================================================${Font}"
-    exit 0
+    #exit 0
 fi
 
 while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
     FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
     kill -9 $FRPCPID
-	#
 done
-fi
 }
 
 #检查系统
