@@ -159,6 +159,16 @@ while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
     FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
     kill -9 $FRPCPID
 done
+
+echo -e "${Tip} ${Red_font_prefix}${FRP_TITLE}已安装${Font_color_suffix}"
+	stty erase '^H' && read -p "卸载按【y】|进入菜单按【n】 ? [Y/n] :" yn
+	[ -z "${yn}" ] && yn="y"
+	if [[ $yn == [Yy] ]]; then
+		echo -e "${Info} VPS 重启中..."
+		reboot
+	else
+    	start_menu
+	fi
 }
 
 #检查系统
