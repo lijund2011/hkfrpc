@@ -158,7 +158,8 @@ fi
 while ! test -z "$(ps -A | grep -w ${FRP_NAME})"; do
     FRPCPID=$(ps -A | grep -w ${FRP_NAME} | awk 'NR==1 {print $1}')
     kill -9 $FRPCPID
-done
+	fi
+#done
 
 }
 
