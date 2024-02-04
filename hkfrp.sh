@@ -33,7 +33,7 @@ Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #安装BBR内核
-installfrpc(){
+set_install(){
 check_frpc
 # check pkg
 if type apt-get >/dev/null 2>&1 ; then
@@ -87,6 +87,23 @@ rm -rf ${WORK_PATH}/${FILE_NAME}.tar.gz ${WORK_PATH}/${FILE_NAME}
 		echo -e "${Info} VPS 重启中..."
 		reboot
 	fi
+}
+
+set_token(){
+	get_value=""
+	echo -e "你正在设置 token "
+
+	read -e -p "请输入：" get_value
+	[[ -z ${get_value} ]] && get_value="none"
+	if [ "${get_value}" = "none" ];then
+	set_token
+	else
+	echo -e "你设置的值为：${get_value}"
+	fi
+
+	sed -i '/^token/c\token = '"${get_value}"'' /usr/local/frps/frps.ini
+	systemctl restart frps
+	echo -e "设置成功！"
 }
 
 #检查Configuration
