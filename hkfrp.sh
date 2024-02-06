@@ -23,7 +23,7 @@ Font="\033[0m"
 WORK_PATH=$(dirname $(readlink -f $0))
 FRP_TITLE=好快FRP内网穿透
 FRP_NAME=frpc
-FRP_VERSION=0.51.3
+FRP_VERSION=0.54.0
 FRP_PATH=/usr/local/frp
 PROXY_URL="https://mirror.ghproxy.com/"
 
@@ -425,7 +425,7 @@ check_status
 }
 frpc_upgrade() {
     echo -e "${Info} ${Red_font_prefix}正在检测新版本...${Font_color_suffix}"
-    API="https://api.github.com/repos/lijund2011/hkfrpc/releases/latest"
+    API="https://api.github.com/repos/fatedier/frp/releases/latest"
     VER=`curl -s "${API}" --connect-timeout 10| grep -Eo '\"tag_name\"(.*?)\",' | cut -d\" -f4 | cut -d v -f2`
     if [[ ${VER} == ${FRP_VERSION} ]]; then
         echo -e "${Info} ${Green_font_prefix}未发现新版本${Font_color_suffix}"
@@ -436,7 +436,7 @@ frpc_upgrade() {
 	read -p "$(echo -e ${Info}${Green_font_prefix}) 是否升级：[y/n]$(echo -e ${Font_color_suffix})" answer
     if [[ "${answer,,}" = "y" ]]; then
 	    check_upgrade
-        echo -e "${Info} ${Green_font_prefix}未发现新版本${Font_color_suffix}"
+        echo -e "${Info} ${Green_font_prefix}更新成功${Font_color_suffix}"
 	else
 	start_menu
     fi
@@ -492,9 +492,6 @@ mv ${FILE_NAMEG}/${FRP_NAME} ${FRP_PATH}
 chmod +x ${FRP_PATH}/${FRP_NAME}
 # 删除没用文件
 rm -rf ${WORK_PATH}/${FILE_NAMEG}.tar.gz ${WORK_PATH}/${FILE_NAMEG}
-#if [[ ${VER} != ${FRP_VERSION} ]]; then
-#    sed -i 's/\(FRP_VERSION=\).*/\1'"${VER}"/g hkfrp.sh
-#fi
 }
 
 #############系统检测组件#############
