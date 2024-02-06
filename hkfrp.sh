@@ -471,16 +471,16 @@ FILE_NAMEG=frp_${VER}_linux_${PLATFORM}
 if [ $GOOGLE_HTTP_CODE == "200" ]; then
 echo -e "${Info} ${Red_font_prefix}正在下载 FRPC客服端${Font_color_suffix}"
     wget -q --show-progress ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${VER}/${FILE_NAMEG}.tar.gz -O ${FILE_NAMEG}.tar.gz
-	wget -q --show-progress ${WORK_PATH} https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.sh
+	wget -q --show-progress ${WORK_PATH} https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.sh && chmod +x hkfrp.sh && bash hkfrp.sh
 else
     if [ $PROXY_HTTP_CODE == "200" ]; then
 	echo -e "${Info} ${Red_font_prefix}正在使用代理下载 FRPC客服端${Font_color_suffix}"
         wget -q --show-progress ${WORK_PATH} ${PROXY_URL}https://github.com/fatedier/frp/releases/download/v${VER}/${FILE_NAMEG}.tar.gz -O ${FILE_NAMEG}.tar.gz
-		wget -q --show-progress ${WORK_PATH} ${PROXY_URL}https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.sh
+		wget -q --show-progress ${WORK_PATH} ${PROXY_URL}https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.sh && chmod +x hkfrp.sh && bash hkfrp.sh
     else
         echo -e "${Red}检测 GitHub Proxy 代理失效 开始使用官方地址下载${Font}"
         wget -q --show-progress ${WORK_PATH} https://github.com/fatedier/frp/releases/download/v${VER}/${FILE_NAMEG}.tar.gz -O ${FILE_NAMEG}.tar.gz
-		wget -q --show-progress ${WORK_PATH} https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.sh
+		wget -q --show-progress ${WORK_PATH} https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.sh && chmod +x hkfrp.sh && bash hkfrp.sh
     fi
 fi
 # 显示解压过程 xzvf 不显示解压过程 xzf
