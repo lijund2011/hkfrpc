@@ -335,6 +335,7 @@ Wants=network.target
 
 [Service]
 Type=simple
+User=root
 Restart=on-failure
 RestartSec=5s
 ExecStart=/usr/local/frp/${FRP_NAME} -c /usr/local/frp/${FRP_NAME}.ini
@@ -342,6 +343,7 @@ ExecStart=/usr/local/frp/${FRP_NAME} -c /usr/local/frp/${FRP_NAME}.ini
 [Install]
 WantedBy=multi-user.target
 EOF
+chown root:root /etc/systemd/system/${FRP_NAME}.service
 chmod -R 755 /etc/systemd/system/${FRP_NAME}.service
 #sudo systemctl daemon-reload >/dev/null 2>&1
 sudo systemctl start ${FRP_NAME} >/dev/null 2>&1
