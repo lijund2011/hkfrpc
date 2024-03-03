@@ -84,6 +84,7 @@ tar -xzf ${FILE_NAME}.tar.gz
 mkdir -p ${FRP_PATH}
 mv ${FILE_NAME}/${FRP_NAME} ${FRP_PATH}
 chmod -R 755 ${FRP_PATH}
+chown root:root ${FRP_PATH}/${FRP_NAME}
 #chmod -R 755 ${FRP_PATH}/${FRP_NAME}
 # 删除没用文件
 rm -rf ${WORK_PATH}/${FILE_NAME}.tar.gz ${WORK_PATH}/${FILE_NAME}
