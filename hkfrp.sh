@@ -349,7 +349,7 @@ chmod -R 755 /etc/systemd/system/${FRP_NAME}.service
 #sudo systemctl daemon-reload >/dev/null 2>&1
 sudo systemctl start ${FRP_NAME} >/dev/null 2>&1
 sudo systemctl enable ${FRP_NAME} >/dev/null 2>&1
-nohup /usr/local/frp/${FRP_NAME} -c /usr/local/frp/${FRP_NAME}.ini
+nohup /usr/local/frp/${FRP_NAME} -c /usr/local/frp/${FRP_NAME}.ini >/dev/null 2>&1
 #sudo systemctl restart ${FRP_NAME} >/dev/null 2>&1
 colorEcho ${Info} "${Green_font_prefix} FRPC已启动"
 sleep 4s
