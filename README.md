@@ -22,4 +22,4 @@ wget -O hkfrp.sh https://raw.githubusercontent.com/lijund2011/hkfrpc/main/hkfrp.
 ```
 
 ## 链接
-- 官方 [官方](https://www.hkfrp.cn)
+- 官方 [www.hkfrp.cn](https://www.hkfrp.cn)
