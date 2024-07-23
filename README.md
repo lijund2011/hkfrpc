@@ -14,7 +14,7 @@
 
 ---
 ## 简易使用方法
-1. Linux   一键启动 **/frpc -u 3U8yX5zDrxE -p FUYJQGTI**          / 3U8yX5zDrxE 为token码 FUYJQGTI为隧道名
+1. Linux   一键启动 ```shell**/frpc -u 3U8yX5zDrxE -p FUYJQGTI**```          / 3U8yX5zDrxE 为token码 FUYJQGTI为隧道名
 2. Windows 一键启动 **frpc.exe -u 3U8yX5zDrxE -p FUYJQGTI**       / 3U8yX5zDrxE 为token码 FUYJQGTI为隧道名
 
 ### 3. Linux 服务器 一键脚本安装
